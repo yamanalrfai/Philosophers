@@ -6,7 +6,7 @@
 /*   By: yaman-alrifai <yaman-alrifai@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 20:45:18 by yaman-alrif       #+#    #+#             */
-/*   Updated: 2025/06/07 11:12:11 by yaman-alrif      ###   ########.fr       */
+/*   Updated: 2025/06/07 12:46:45 by yaman-alrif      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,27 +14,22 @@
 
 void time_to_eat(t_phil *phil)
 {
-    pthread_mutex_t *first;
-    pthread_mutex_t *second;
-
     if (&phil->fork_left < &phil->fork_right)
     {
-        first = &phil->fork_left;
-        second = &phil->fork_right;
+        pthread_mutex_lock(&phil->fork_left);
+        pthread_mutex_lock(&phil->fork_right);
     }
     else
     {
-        first = &phil->fork_right;
-        second = &phil->fork_left;
+        pthread_mutex_lock(&phil->fork_right);
+        pthread_mutex_lock(&phil->fork_left);
     }
-    pthread_mutex_lock(first);
-    pthread_mutex_lock(second);
     printf("%lld %d has taken a fork\n", get_time() - phil->all->start_time, phil->i);
     printf("%lld %d has taken a fork\n", get_time() - phil->all->start_time, phil->i);
     phil->last_meal_time = get_time();
     printf("%lld %d is eating\n", phil->last_meal_time - phil->all->start_time, phil->i);
-    pthread_mutex_unlock(first);
-    pthread_mutex_unlock(second);
+    pthread_mutex_unlock(&phil->fork_left);
+    pthread_mutex_unlock(&phil->fork_right);
     usleep(phil->all->time_to_eat * 1000);
     phil->num_meals++;
 }
@@ -45,7 +40,7 @@ void *phil_loop(void *arg)
 
     phil = (t_phil *)arg;
     if (phil->i % 2)
-		usleep(15000);
+		usleep(1500);
     while (1)
     {
         if (get_time() - phil->last_meal_time > phil->all->time_to_die && phil->all->die == 0)
@@ -63,7 +58,6 @@ void *phil_loop(void *arg)
         usleep(phil->all->time_to_sleep * 1000);
         printf("%lld %d is thinking\n", get_time() - phil->all->start_time, phil->i);
         usleep(500);
-        time_to_eat(phil);
     }
     return (NULL);
 }
