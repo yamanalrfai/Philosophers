@@ -6,7 +6,7 @@
 /*   By: yaman-alrifai <yaman-alrifai@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 20:45:49 by yaman-alrif       #+#    #+#             */
-/*   Updated: 2025/06/07 11:06:48 by yaman-alrif      ###   ########.fr       */
+/*   Updated: 2025/06/07 16:05:25 by yaman-alrif      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ typedef struct s_all
     int		        time_to_sleep;
     int		        num_meals;
     long long	    start_time;
-    int             die;
+    _Atomic int     die;
     pthread_mutex_t *forks;
     t_phil		    *philos;
 }	t_all;

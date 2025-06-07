@@ -6,7 +6,7 @@
 /*   By: yaman-alrifai <yaman-alrifai@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 20:45:18 by yaman-alrif       #+#    #+#             */
-/*   Updated: 2025/06/07 12:46:45 by yaman-alrif      ###   ########.fr       */
+/*   Updated: 2025/06/07 15:59:14 by yaman-alrif      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,19 @@ void time_to_eat(t_phil *phil)
         pthread_mutex_lock(&phil->fork_right);
         pthread_mutex_lock(&phil->fork_left);
     }
+    if (phil->all->die)
+    {
+        pthread_mutex_unlock(&phil->fork_left);
+        pthread_mutex_unlock(&phil->fork_right);
+        return;
+    }
     printf("%lld %d has taken a fork\n", get_time() - phil->all->start_time, phil->i);
     printf("%lld %d has taken a fork\n", get_time() - phil->all->start_time, phil->i);
     phil->last_meal_time = get_time();
     printf("%lld %d is eating\n", phil->last_meal_time - phil->all->start_time, phil->i);
+    usleep(phil->all->time_to_eat * 1000);
     pthread_mutex_unlock(&phil->fork_left);
     pthread_mutex_unlock(&phil->fork_right);
-    usleep(phil->all->time_to_eat * 1000);
     phil->num_meals++;
 }
 
@@ -39,25 +45,23 @@ void *phil_loop(void *arg)
     t_phil *phil;
 
     phil = (t_phil *)arg;
-    if (phil->i % 2)
-		usleep(1500);
+    if (phil->i % 2 == 0)
+        usleep(1500);
     while (1)
     {
-        if (get_time() - phil->last_meal_time > phil->all->time_to_die && phil->all->die == 0)
-        {
-            phil->all->die = 1;
-            printf("%lld %d has died\n", get_time() - phil->all->start_time, phil->i);
-            return (NULL);
-        }
         if (phil->all->die)
             return (NULL);
         if (phil->all->num_meals > 0 && phil->num_meals >= phil->all->num_meals)
             return (NULL);
         time_to_eat(phil);
+        if (phil->all->die)
+            return (NULL);
         printf("%lld %d is sleeping\n", get_time() - phil->all->start_time, phil->i);
         usleep(phil->all->time_to_sleep * 1000);
+        if (phil->all->die)
+            return (NULL);
         printf("%lld %d is thinking\n", get_time() - phil->all->start_time, phil->i);
-        usleep(500);
+        usleep(1500);
     }
     return (NULL);
 }
@@ -89,6 +93,30 @@ void end(t_all *all)
     free_all(all);
 }
 
+void *monitor(void *arg)
+{
+    t_all *all;
+    int i;
+
+    all = arg;
+    while (!all->die)
+    {
+        i = 0;
+        while (i < all->num_philos)
+        {
+            if (get_time() - all->philos[i].last_meal_time > all->time_to_die)
+            {
+                all->die = 1;
+                printf("%lld %d has died\n", get_time() - all->start_time, all->philos[i].i);
+                return NULL;
+            }
+            i++;
+        }
+        usleep(1000);
+    }
+    return NULL;
+}
+
 int main(int c, char **v)
 {
     t_all all;
@@ -97,7 +125,10 @@ int main(int c, char **v)
         return (1);
     if(init(&all, c, v))
         return (1);
+    pthread_t monitor_thread;
+    pthread_create(&monitor_thread, NULL, monitor, &all);
     start(&all);
     end(&all);
+    pthread_join(monitor_thread, NULL);
     return (0);
 }
