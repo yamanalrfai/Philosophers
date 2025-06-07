@@ -1,7 +1,7 @@
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -g
 NAME = philo
-SRCS = main.c
+SRCS = main.c input.c
 
 OBJS = $(SRCS:.c=.o)
 
