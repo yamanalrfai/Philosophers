@@ -6,7 +6,7 @@
 /*   By: yaman-alrifai <yaman-alrifai@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 20:45:49 by yaman-alrif       #+#    #+#             */
-/*   Updated: 2025/06/07 08:57:13 by yaman-alrif      ###   ########.fr       */
+/*   Updated: 2025/06/07 11:06:48 by yaman-alrif      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 # include <sys/time.h>
 # include <limits.h>
 
+typedef struct s_all t_all;
+
 typedef struct s_phil
 {
     int				i;
@@ -27,9 +29,7 @@ typedef struct s_phil
     pthread_mutex_t	fork_left;
     pthread_mutex_t	fork_right;
     pthread_mutex_t	meal_lock;
-    int				time_to_eat;
-    int				time_to_sleep;
-    int				time_to_die;
+    t_all            *all;
     pthread_t		thread;
 }	t_phil;
 
@@ -41,6 +41,7 @@ typedef struct s_all
     int		        time_to_sleep;
     int		        num_meals;
     long long	    start_time;
+    int             die;
     pthread_mutex_t *forks;
     t_phil		    *philos;
 }	t_all;
@@ -50,6 +51,15 @@ int		check_INT_MAX(int j, int i, char *str);
 int		valid_atoi(char *str);
 int		input_check(int c, char **v);
 int		init(t_all *all, int c, char **v);
+void	free_forks(t_all *all);
+void	free_philos(t_all *all);
+int		free_all(t_all *all);
+int		start(t_all *all);
+int		init_forks(t_all *all);
+int		init_philos(t_all *all);
+int		get_time(void);
+void	time_to_eat(t_phil *phil);
+void	*phil_loop(void *arg);
 
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: yaman-alrifai <yaman-alrifai@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/07 08:19:29 by yaman-alrif       #+#    #+#             */
-/*   Updated: 2025/06/07 08:19:56 by yaman-alrif      ###   ########.fr       */
+/*   Updated: 2025/06/07 10:35:56 by yaman-alrif      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,37 @@ void free_forks(t_all *all)
 
     if (all->forks)
     {
-        for (i = 0; i < all->num_philos; i++)
+        i = 0;
+        while (i < all->num_philos)
         {
             pthread_mutex_destroy(&all->forks[i]);
+            i++;
         }
         free(all->forks);
     }
+}
+
+void free_philos(t_all *all)
+{
+    if (all->philos)
+    {
+        free(all->philos);
+    }
+}
+
+int free_all(t_all *all)
+{
+    free_forks(all);
+    free_philos(all);
+    return (0);
+}
+
+int get_time(void)
+{
+    struct timeval tv;
+    long long time;
+
+    gettimeofday(&tv, NULL);
+    time = (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
+    return (time);
 }
