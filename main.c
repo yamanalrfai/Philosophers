@@ -6,7 +6,7 @@
 /*   By: yaman-alrifai <yaman-alrifai@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 20:45:18 by yaman-alrif       #+#    #+#             */
-/*   Updated: 2025/06/07 15:59:14 by yaman-alrif      ###   ########.fr       */
+/*   Updated: 2025/06/07 19:09:58 by yaman-alrif      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,9 +51,9 @@ void *phil_loop(void *arg)
     {
         if (phil->all->die)
             return (NULL);
+        time_to_eat(phil);
         if (phil->all->num_meals > 0 && phil->num_meals >= phil->all->num_meals)
             return (NULL);
-        time_to_eat(phil);
         if (phil->all->die)
             return (NULL);
         printf("%lld %d is sleeping\n", get_time() - phil->all->start_time, phil->i);
@@ -97,20 +97,30 @@ void *monitor(void *arg)
 {
     t_all *all;
     int i;
+    int done;
 
     all = arg;
     while (!all->die)
     {
         i = 0;
+        done = 1;
         while (i < all->num_philos)
         {
-            if (get_time() - all->philos[i].last_meal_time > all->time_to_die)
+            if (get_time() - all->philos[i].last_meal_time > all->time_to_die &&
+                !((all->num_meals > 0 && all->philos[i].num_meals >= all->num_meals)))
             {
                 all->die = 1;
                 printf("%lld %d has died\n", get_time() - all->start_time, all->philos[i].i);
                 return NULL;
             }
+            if (!(all->num_meals > 0 && all->philos[i].num_meals >= all->num_meals))
+                done = 0;
             i++;
+        }
+        if (all->num_meals > 0 && done)
+        {
+            all->die = 1;
+            return NULL;
         }
         usleep(1000);
     }
@@ -120,15 +130,15 @@ void *monitor(void *arg)
 int main(int c, char **v)
 {
     t_all all;
+    pthread_t monitor_thread;
     
     if(input_check(c, v))
         return (1);
     if(init(&all, c, v))
         return (1);
-    pthread_t monitor_thread;
     pthread_create(&monitor_thread, NULL, monitor, &all);
     start(&all);
-    end(&all);
     pthread_join(monitor_thread, NULL);
+    end(&all);
     return (0);
 }
