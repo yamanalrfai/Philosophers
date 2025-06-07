@@ -6,37 +6,54 @@
 /*   By: yaman-alrifai <yaman-alrifai@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 20:45:18 by yaman-alrif       #+#    #+#             */
-/*   Updated: 2025/06/07 19:09:58 by yaman-alrif      ###   ########.fr       */
+/*   Updated: 2025/06/07 19:54:38 by yaman-alrif      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "phil.h"
 
+void ft_usleep(long time_in_ms, t_all *table)
+{
+    struct timeval start;
+    struct timeval now;
+    long timeout;
+
+    gettimeofday(&start, NULL);
+    timeout = 0;
+    while (timeout <= time_in_ms && table->die == 0)
+    {
+        usleep(100);
+        gettimeofday(&now, NULL);
+        timeout = (now.tv_sec - start.tv_sec) * 1000
+                + (now.tv_usec - start.tv_usec) / 1000;
+    }
+}
+
 void time_to_eat(t_phil *phil)
 {
     if (&phil->fork_left < &phil->fork_right)
     {
-        pthread_mutex_lock(&phil->fork_left);
-        pthread_mutex_lock(&phil->fork_right);
+        pthread_mutex_lock(phil->fork_left);
+        pthread_mutex_lock(phil->fork_right);
     }
     else
     {
-        pthread_mutex_lock(&phil->fork_right);
-        pthread_mutex_lock(&phil->fork_left);
+        pthread_mutex_lock(phil->fork_right);
+        pthread_mutex_lock(phil->fork_left);
     }
     if (phil->all->die)
     {
-        pthread_mutex_unlock(&phil->fork_left);
-        pthread_mutex_unlock(&phil->fork_right);
+        pthread_mutex_unlock(phil->fork_left);
+        pthread_mutex_unlock(phil->fork_right);
         return;
     }
     printf("%lld %d has taken a fork\n", get_time() - phil->all->start_time, phil->i);
     printf("%lld %d has taken a fork\n", get_time() - phil->all->start_time, phil->i);
+    printf("%lld %d is eating\n", get_time() - phil->all->start_time, phil->i);
+    ft_usleep(phil->all->time_to_eat * 1000, phil->all);
     phil->last_meal_time = get_time();
-    printf("%lld %d is eating\n", phil->last_meal_time - phil->all->start_time, phil->i);
-    usleep(phil->all->time_to_eat * 1000);
-    pthread_mutex_unlock(&phil->fork_left);
-    pthread_mutex_unlock(&phil->fork_right);
+    pthread_mutex_unlock(phil->fork_left);
+    pthread_mutex_unlock(phil->fork_right);
     phil->num_meals++;
 }
 
@@ -46,7 +63,7 @@ void *phil_loop(void *arg)
 
     phil = (t_phil *)arg;
     if (phil->i % 2 == 0)
-        usleep(1500);
+        ft_usleep(1500, phil->all);
     while (1)
     {
         if (phil->all->die)
@@ -57,11 +74,8 @@ void *phil_loop(void *arg)
         if (phil->all->die)
             return (NULL);
         printf("%lld %d is sleeping\n", get_time() - phil->all->start_time, phil->i);
-        usleep(phil->all->time_to_sleep * 1000);
-        if (phil->all->die)
-            return (NULL);
+        ft_usleep(phil->all->time_to_sleep * 1000, phil->all);
         printf("%lld %d is thinking\n", get_time() - phil->all->start_time, phil->i);
-        usleep(1500);
     }
     return (NULL);
 }

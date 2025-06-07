@@ -6,7 +6,7 @@
 /*   By: yaman-alrifai <yaman-alrifai@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 20:45:49 by yaman-alrif       #+#    #+#             */
-/*   Updated: 2025/06/07 16:05:25 by yaman-alrif      ###   ########.fr       */
+/*   Updated: 2025/06/07 20:01:27 by yaman-alrif      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,8 @@ typedef struct s_phil
     int				i;
     int				num_meals;
     long long		last_meal_time;
-    pthread_mutex_t	fork_left;
-    pthread_mutex_t	fork_right;
+    pthread_mutex_t	*fork_left;
+    pthread_mutex_t	*fork_right;
     pthread_mutex_t	meal_lock;
     t_all            *all;
     pthread_t		thread;
@@ -57,9 +57,9 @@ int		free_all(t_all *all);
 int		start(t_all *all);
 int		init_forks(t_all *all);
 int		init_philos(t_all *all);
-int		get_time(void);
 void	time_to_eat(t_phil *phil);
 void	*phil_loop(void *arg);
+long long get_time(void);
 
 
 #endif

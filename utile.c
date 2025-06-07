@@ -6,7 +6,7 @@
 /*   By: yaman-alrifai <yaman-alrifai@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/07 08:19:29 by yaman-alrif       #+#    #+#             */
-/*   Updated: 2025/06/07 10:35:56 by yaman-alrif      ###   ########.fr       */
+/*   Updated: 2025/06/07 20:01:10 by yaman-alrif      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ int free_all(t_all *all)
     return (0);
 }
 
-int get_time(void)
+long long get_time(void)
 {
     struct timeval tv;
     long long time;
