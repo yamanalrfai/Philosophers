@@ -6,7 +6,7 @@
 /*   By: yaman-alrifai <yaman-alrifai@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 20:59:08 by yaman-alrif       #+#    #+#             */
-/*   Updated: 2025/06/07 19:41:26 by yaman-alrif      ###   ########.fr       */
+/*   Updated: 2025/06/07 21:21:01 by yaman-alrif      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ int init_philos(t_all *all)
         all->philos[i].fork_left = &all->forks[i];
         all->philos[i].fork_right = &all->forks[(i + 1) % all->num_philos];
         all->philos[i].all = all;
+        all->philos[i].last_meal_time = all->start_time;
         i++;
     }
     return (0);
