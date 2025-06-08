@@ -6,7 +6,7 @@
 /*   By: yaman-alrifai <yaman-alrifai@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 20:45:18 by yaman-alrif       #+#    #+#             */
-/*   Updated: 2025/06/07 22:33:00 by yaman-alrif      ###   ########.fr       */
+/*   Updated: 2025/06/08 08:41:45 by yaman-alrif      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,9 @@ void time_to_eat(t_phil *phil)
     ft_usleep(phil->all->time_to_eat, phil->all);
     pthread_mutex_unlock(first_fork);
     pthread_mutex_unlock(second_fork);
+    pthread_mutex_lock(&phil->meal_lock);
     phil->last_meal_time = get_time();
+    pthread_mutex_unlock(&phil->meal_lock);
     phil->num_meals++;
 }
 
@@ -62,7 +64,7 @@ void *phil_loop(void *arg)
 
     phil = (t_phil *)arg;
     if (phil->i % 2 == 0)
-        ft_usleep(500, phil->all);
+        ft_usleep(phil->all->time_to_eat / 2, phil->all);
     while (1)
     {
         if (phil->all->die)
@@ -75,6 +77,7 @@ void *phil_loop(void *arg)
         printf("%lld %d is sleeping\n", get_time() - phil->all->start_time, phil->i);
         ft_usleep(phil->all->time_to_sleep, phil->all);
         printf("%lld %d is thinking\n", get_time() - phil->all->start_time, phil->i);
+        usleep(10);
     }
     return (NULL);
 }
@@ -119,13 +122,16 @@ void *monitor(void *arg)
         done = 1;
         while (i < all->num_philos)
         {
+            pthread_mutex_lock(&all->philos[i].meal_lock);
             if (get_time() - all->philos[i].last_meal_time > all->time_to_die &&
                 !((all->num_meals > 0 && all->philos[i].num_meals >= all->num_meals)))
             {
+                pthread_mutex_unlock(&all->philos[i].meal_lock);
                 all->die = 1;
                 printf("%lld %d has died\n", get_time() - all->start_time, all->philos[i].i);
                 return NULL;
             }
+            pthread_mutex_unlock(&all->philos[i].meal_lock);
             if (!(all->num_meals > 0 && all->philos[i].num_meals >= all->num_meals))
                 done = 0;
             i++;

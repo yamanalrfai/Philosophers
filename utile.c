@@ -6,7 +6,7 @@
 /*   By: yaman-alrifai <yaman-alrifai@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/07 08:19:29 by yaman-alrif       #+#    #+#             */
-/*   Updated: 2025/06/07 20:01:10 by yaman-alrif      ###   ########.fr       */
+/*   Updated: 2025/06/08 08:34:50 by yaman-alrif      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,16 @@ void free_forks(t_all *all)
 
 void free_philos(t_all *all)
 {
+    int i;
+    
     if (all->philos)
     {
+        i = 0;
+        while (i < all->num_philos)
+        {
+            pthread_mutex_destroy(&all->philos[i].meal_lock);
+            i++;
+        }
         free(all->philos);
     }
 }
