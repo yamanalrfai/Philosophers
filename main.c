@@ -6,7 +6,7 @@
 /*   By: yaman-alrifai <yaman-alrifai@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 20:45:18 by yaman-alrif       #+#    #+#             */
-/*   Updated: 2025/06/08 17:17:06 by yaman-alrif      ###   ########.fr       */
+/*   Updated: 2025/06/08 17:30:44 by yaman-alrif      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,8 @@ void time_to_eat(t_phil *phil)
         pthread_mutex_unlock(second_fork);
         return;
     }
+    if (phil->all->die)
+        return  ;
     printf("%lld %d has taken a fork\n", get_time() - phil->all->start_time, phil->i);
     printf("%lld %d has taken a fork\n", get_time() - phil->all->start_time, phil->i);
     printf("%lld %d is eating\n", get_time() - phil->all->start_time, phil->i);
@@ -94,6 +96,8 @@ void *phil_loop(void *arg)
             return (NULL);
         printf("%lld %d is sleeping\n", get_time() - phil->all->start_time, phil->i);
         ft_usleep(phil->all->time_to_sleep, phil->all);
+        if (phil->all->die)
+            return (NULL);
         printf("%lld %d is thinking\n", get_time() - phil->all->start_time, phil->i);
     }
     return (NULL);
