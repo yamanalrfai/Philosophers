@@ -6,23 +6,23 @@
 /*   By: yaman-alrifai <yaman-alrifai@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 20:45:18 by yaman-alrif       #+#    #+#             */
-/*   Updated: 2025/06/08 13:26:53 by yaman-alrif      ###   ########.fr       */
+/*   Updated: 2025/06/08 17:17:06 by yaman-alrif      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "phil.h"
 
-void time_printf(t_all *all, const char *message, int phil_id)
-{
-    pthread_mutex_lock(&all->print_lock);
-    if (all->die)
-    {
-        pthread_mutex_unlock(&all->print_lock);
-        return;
-    }
-    printf("%lld %d %s\n", get_time() - all->start_time, phil_id, message);
-    pthread_mutex_unlock(&all->print_lock);
-}
+// void time_printf(t_all *all, const char *message, int phil_id)
+// {
+//     pthread_mutex_lock(&all->print_lock);
+//     if (all->die)
+//     {
+//         pthread_mutex_unlock(&all->print_lock);
+//         return;
+//     }
+//     printf("%lld %d %s\n", get_time() - all->start_time, phil_id, message);
+//     pthread_mutex_unlock(&all->print_lock);
+// }
 
 void ft_usleep(long time_in_ms, t_all *table)
 {
@@ -60,14 +60,14 @@ void time_to_eat(t_phil *phil)
         pthread_mutex_unlock(second_fork);
         return;
     }
-    time_printf(phil->all, "has taken a fork", phil->i);
-    time_printf(phil->all, "has taken a fork", phil->i);
-    time_printf(phil->all, "is eating", phil->i);
+    printf("%lld %d has taken a fork\n", get_time() - phil->all->start_time, phil->i);
+    printf("%lld %d has taken a fork\n", get_time() - phil->all->start_time, phil->i);
+    printf("%lld %d is eating\n", get_time() - phil->all->start_time, phil->i);
+    pthread_mutex_lock(&phil->meal_lock);
     ft_usleep(phil->all->time_to_eat, phil->all);
+    phil->last_meal_time = get_time();
     pthread_mutex_unlock(first_fork);
     pthread_mutex_unlock(second_fork);
-    pthread_mutex_lock(&phil->meal_lock);
-    phil->last_meal_time = get_time();
     phil->num_meals++;
     pthread_mutex_unlock(&phil->meal_lock);
 }
@@ -77,8 +77,6 @@ void *phil_loop(void *arg)
     t_phil *phil;
 
     phil = (t_phil *)arg;
-    if (phil->i % 2 == 0)
-        ft_usleep(phil->all->time_to_eat / 2, phil->all);
     while (1)
     {
         if (phil->all->num_philos == 1)
@@ -94,10 +92,9 @@ void *phil_loop(void *arg)
             return (NULL);
         if (phil->all->die)
             return (NULL);
-        time_printf(phil->all, "is sleeping", phil->i);
+        printf("%lld %d is sleeping\n", get_time() - phil->all->start_time, phil->i);
         ft_usleep(phil->all->time_to_sleep, phil->all);
-        time_printf(phil->all, "is thinking", phil->i);
-        usleep(10);
+        printf("%lld %d is thinking\n", get_time() - phil->all->start_time, phil->i);
     }
     return (NULL);
 }
@@ -129,6 +126,21 @@ void end(t_all *all)
     free_all(all);
 }
 
+int monitor_loop(t_all *all, int i)
+{
+    pthread_mutex_lock(&all->philos[i].meal_lock);
+    if (get_time() - all->philos[i].last_meal_time > all->time_to_die &&
+        !((all->num_meals > 0 && all->philos[i].num_meals >= all->num_meals)))
+    {
+        printf("%lld %d is dead\n", get_time() - all->start_time, all->philos[i].i);
+        all->die = 1;
+        pthread_mutex_unlock(&all->philos[i].meal_lock);
+        return 1;
+    }
+    pthread_mutex_unlock(&all->philos[i].meal_lock);
+    return 0;
+}
+
 void *monitor(void *arg)
 {
     t_all *all;
@@ -142,16 +154,8 @@ void *monitor(void *arg)
         done = 1;
         while (i < all->num_philos)
         {
-            pthread_mutex_lock(&all->philos[i].meal_lock);
-            if (get_time() - all->philos[i].last_meal_time > all->time_to_die &&
-                !((all->num_meals > 0 && all->philos[i].num_meals >= all->num_meals)))
-            {
-                pthread_mutex_unlock(&all->philos[i].meal_lock);
-                time_printf(all, "died", all->philos[i].i);
-                all->die = 1;
+            if (monitor_loop(all, i))
                 return NULL;
-            }
-            pthread_mutex_unlock(&all->philos[i].meal_lock);
             if (!(all->num_meals > 0 && all->philos[i].num_meals >= all->num_meals))
                 done = 0;
             i++;

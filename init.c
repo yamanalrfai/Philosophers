@@ -6,7 +6,7 @@
 /*   By: yaman-alrifai <yaman-alrifai@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 20:59:08 by yaman-alrif       #+#    #+#             */
-/*   Updated: 2025/06/08 14:22:39 by yaman-alrif      ###   ########.fr       */
+/*   Updated: 2025/06/08 17:02:59 by yaman-alrif      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,6 @@ int init_philos(t_all *all)
         all->philos[i].fork_left = &all->forks[i];
         all->philos[i].fork_right = &all->forks[(i + 1) % all->num_philos];
         all->philos[i].all = all;
-        all->philos[i].last_meal_time = all->start_time;
         if (pthread_mutex_init(&all->philos[i].meal_lock, NULL) != 0)
             return (1);
         i++;
@@ -69,8 +68,6 @@ int init(t_all *all, int c, char **v)
         all->num_meals = atoi(v[5]);
     all->start_time = get_time();
     all->die = 0;
-    if (pthread_mutex_init(&all->print_lock, NULL) != 0)
-        return (1);
     if (init_forks(all))
         return (1);
     if (init_philos(all))
