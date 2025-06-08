@@ -6,7 +6,7 @@
 /*   By: yaman-alrifai <yaman-alrifai@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 21:38:10 by yaman-alrif       #+#    #+#             */
-/*   Updated: 2025/06/06 21:38:17 by yaman-alrif      ###   ########.fr       */
+/*   Updated: 2025/06/08 14:20:19 by yaman-alrif      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int check_INT_MAX(int j, int i, char *str)
     if (i - j >= 12 || (i - j == 11 && !(str[j] == '-' || str[j] == '+')))
         return (0);
     num = atoll(str + j);
-    if (num < INT_MIN || num > INT_MAX)
+    if (num < 0 || num > INT_MAX)
         return (0);
     return (1);
 }

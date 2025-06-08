@@ -6,7 +6,7 @@
 /*   By: yaman-alrifai <yaman-alrifai@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 20:59:08 by yaman-alrif       #+#    #+#             */
-/*   Updated: 2025/06/08 10:54:22 by yaman-alrif      ###   ########.fr       */
+/*   Updated: 2025/06/08 14:22:39 by yaman-alrif      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ int init_philos(t_all *all)
     i = 0;
     while (i < all->num_philos)
     {
-        // printf("Philosopher %d initialized\n", i + 1);
         all->philos[i].i = i + 1;
         all->philos[i].num_meals = 0;
         all->philos[i].last_meal_time = all->start_time;
@@ -61,20 +60,20 @@ int init(t_all *all, int c, char **v)
     all->time_to_die = atoi(v[2]);
     all->time_to_eat = atoi(v[3]);
     all->time_to_sleep = atoi(v[4]);
+    all->num_meals = -1;
+    all->forks = NULL;
+    all->philos = NULL;
+    if (all->num_philos == 0)
+        return (1);
     if (c == 6)
         all->num_meals = atoi(v[5]);
-    else
-        all->num_meals = -1;
     all->start_time = get_time();
     all->die = 0;
     if (pthread_mutex_init(&all->print_lock, NULL) != 0)
         return (1);
-    if(init_forks(all))
+    if (init_forks(all))
         return (1);
     if (init_philos(all))
-    {
-        free_forks(all);
         return (1);
-    }
     return (0);
 }

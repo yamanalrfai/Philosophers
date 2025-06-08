@@ -6,7 +6,7 @@
 /*   By: yaman-alrifai <yaman-alrifai@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 20:45:18 by yaman-alrif       #+#    #+#             */
-/*   Updated: 2025/06/08 11:20:41 by yaman-alrif      ###   ########.fr       */
+/*   Updated: 2025/06/08 13:26:53 by yaman-alrif      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,8 @@ void time_to_eat(t_phil *phil)
     pthread_mutex_lock(second_fork);
     if (phil->all->die)
     {
+        pthread_mutex_unlock(first_fork);
+        pthread_mutex_unlock(second_fork);
         return;
     }
     time_printf(phil->all, "has taken a fork", phil->i);
@@ -66,8 +68,8 @@ void time_to_eat(t_phil *phil)
     pthread_mutex_unlock(second_fork);
     pthread_mutex_lock(&phil->meal_lock);
     phil->last_meal_time = get_time();
-    pthread_mutex_unlock(&phil->meal_lock);
     phil->num_meals++;
+    pthread_mutex_unlock(&phil->meal_lock);
 }
 
 void *phil_loop(void *arg)
