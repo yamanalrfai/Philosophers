@@ -6,7 +6,7 @@
 /*   By: yaman-alrifai <yaman-alrifai@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 20:45:49 by yaman-alrif       #+#    #+#             */
-/*   Updated: 2025/06/07 20:01:27 by yaman-alrif      ###   ########.fr       */
+/*   Updated: 2025/06/08 10:53:44 by yaman-alrif      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ typedef struct s_all
     long long	    start_time;
     _Atomic int     die;
     pthread_mutex_t *forks;
+    pthread_mutex_t print_lock;
     t_phil		    *philos;
 }	t_all;
 
