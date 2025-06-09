@@ -6,7 +6,7 @@
 /*   By: yaman-alrifai <yaman-alrifai@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 20:45:18 by yaman-alrif       #+#    #+#             */
-/*   Updated: 2025/06/08 17:30:44 by yaman-alrif      ###   ########.fr       */
+/*   Updated: 2025/06/09 08:46:46 by yaman-alrif      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void time_to_eat(t_phil *phil)
     pthread_mutex_t *second_fork = phil->fork_right;
     
 
-    if (phil->i % 2 == 0)
+    if (phil->i % 2)
     {
         first_fork = phil->fork_right;
         second_fork = phil->fork_left;
@@ -65,13 +65,13 @@ void time_to_eat(t_phil *phil)
     printf("%lld %d has taken a fork\n", get_time() - phil->all->start_time, phil->i);
     printf("%lld %d has taken a fork\n", get_time() - phil->all->start_time, phil->i);
     printf("%lld %d is eating\n", get_time() - phil->all->start_time, phil->i);
-    pthread_mutex_lock(&phil->meal_lock);
     ft_usleep(phil->all->time_to_eat, phil->all);
+    pthread_mutex_lock(&phil->meal_lock);
     phil->last_meal_time = get_time();
-    pthread_mutex_unlock(first_fork);
-    pthread_mutex_unlock(second_fork);
     phil->num_meals++;
     pthread_mutex_unlock(&phil->meal_lock);
+    pthread_mutex_unlock(first_fork);
+    pthread_mutex_unlock(second_fork);
 }
 
 void *phil_loop(void *arg)
