@@ -6,23 +6,23 @@
 /*   By: yaman-alrifai <yaman-alrifai@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 20:45:18 by yaman-alrif       #+#    #+#             */
-/*   Updated: 2025/06/09 09:30:35 by yaman-alrif      ###   ########.fr       */
+/*   Updated: 2025/06/09 22:41:02 by yaman-alrif      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "phil.h"
 
-// void time_printf(t_all *all, const char *message, int phil_id)
-// {
-//     pthread_mutex_lock(&all->print_lock);
-//     if (all->die)
-//     {
-//         pthread_mutex_unlock(&all->print_lock);
-//         return;
-//     }
-//     printf("%lld %d %s\n", get_time() - all->start_time, phil_id, message);
-//     pthread_mutex_unlock(&all->print_lock);
-// }
+void time_printf(t_all *all, const char *message, int phil_id)
+{
+    pthread_mutex_lock(&all->print_lock);
+    if (all->die)
+    {
+        pthread_mutex_unlock(&all->print_lock);
+        return;
+    }
+    printf("%lld %d %s\n", get_time() - all->start_time, phil_id, message);
+    pthread_mutex_unlock(&all->print_lock);
+}
 
 void ft_usleep(long time_in_ms, t_all *table)
 {
@@ -37,7 +37,6 @@ void time_to_eat(t_phil *phil)
     pthread_mutex_t *first_fork = phil->fork_left;
     pthread_mutex_t *second_fork = phil->fork_right;
 
-    // Make sure the lowest numbered philosopher picks left fork first
     if (phil->i % 2 == 0)
     {
         first_fork = phil->fork_left;
@@ -58,9 +57,9 @@ void time_to_eat(t_phil *phil)
     }
     if (phil->all->die)
         return  ;
-    printf("%lld %d has taken a fork\n", get_time() - phil->all->start_time, phil->i);
-    printf("%lld %d has taken a fork\n", get_time() - phil->all->start_time, phil->i);
-    printf("%lld %d is eating\n", get_time() - phil->all->start_time, phil->i);
+    time_printf(phil->all, "has taken a fork", phil->i);
+    time_printf(phil->all, "has taken a fork", phil->i);
+    time_printf(phil->all, "is eating", phil->i);
     ft_usleep(phil->all->time_to_eat, phil->all);
     pthread_mutex_lock(&phil->meal_lock);
     phil->last_meal_time = get_time();
@@ -81,7 +80,7 @@ void *phil_loop(void *arg)
     {
         if (phil->all->num_philos == 1)
         {
-            printf("%lld %d has taken a fork\n", get_time() - phil->all->start_time, phil->i);
+            time_printf(phil->all, "is thinking", phil->i);
             ft_usleep(phil->all->time_to_die + 10, phil->all); // Wait until death
             return (NULL);
         }
@@ -92,11 +91,11 @@ void *phil_loop(void *arg)
             return (NULL);
         if (phil->all->die)
             return (NULL);
-        printf("%lld %d is sleeping\n", get_time() - phil->all->start_time, phil->i);
+        time_printf(phil->all, "is sleeping", phil->i);
         ft_usleep(phil->all->time_to_sleep, phil->all);
         if (phil->all->die)
             return (NULL);
-        printf("%lld %d is thinking\n", get_time() - phil->all->start_time, phil->i);
+        time_printf(phil->all, "is thinking", phil->i);
     }
     return (NULL);
 }
