@@ -6,7 +6,7 @@
 /*   By: yaman-alrifai <yaman-alrifai@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 20:45:18 by yaman-alrif       #+#    #+#             */
-/*   Updated: 2025/06/09 08:46:46 by yaman-alrif      ###   ########.fr       */
+/*   Updated: 2025/06/09 09:30:35 by yaman-alrif      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,28 +26,24 @@
 
 void ft_usleep(long time_in_ms, t_all *table)
 {
-    struct timeval start;
-    struct timeval now;
-    long timeout;
-
-    gettimeofday(&start, NULL);
-    timeout = 0;
-    while (timeout <= time_in_ms && table->die == 0)
-    {
+    long start = get_time();
+    
+    while (get_time() - start < time_in_ms && !table->die)
         usleep(100);
-        gettimeofday(&now, NULL);
-        timeout = (now.tv_sec - start.tv_sec) * 1000
-                + (now.tv_usec - start.tv_usec) / 1000;
-    }
 }
 
 void time_to_eat(t_phil *phil)
 {
     pthread_mutex_t *first_fork = phil->fork_left;
     pthread_mutex_t *second_fork = phil->fork_right;
-    
 
-    if (phil->i % 2)
+    // Make sure the lowest numbered philosopher picks left fork first
+    if (phil->i % 2 == 0)
+    {
+        first_fork = phil->fork_left;
+        second_fork = phil->fork_right;
+    }
+    else
     {
         first_fork = phil->fork_right;
         second_fork = phil->fork_left;
@@ -79,6 +75,8 @@ void *phil_loop(void *arg)
     t_phil *phil;
 
     phil = (t_phil *)arg;
+    if (phil->i % 2 == 0)
+        usleep(1000);
     while (1)
     {
         if (phil->all->num_philos == 1)
