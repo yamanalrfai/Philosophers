@@ -6,7 +6,7 @@
 /*   By: yaman-alrifai <yaman-alrifai@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 20:45:18 by yaman-alrif       #+#    #+#             */
-/*   Updated: 2025/06/09 22:41:02 by yaman-alrif      ###   ########.fr       */
+/*   Updated: 2025/06/09 23:37:10 by yaman-alrif      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,18 +84,14 @@ void *phil_loop(void *arg)
             ft_usleep(phil->all->time_to_die + 10, phil->all); // Wait until death
             return (NULL);
         }
-        if (phil->all->die)
-            return (NULL);
         time_to_eat(phil);
         if (phil->all->num_meals > 0 && phil->num_meals >= phil->all->num_meals)
             return (NULL);
-        if (phil->all->die)
-            return (NULL);
         time_printf(phil->all, "is sleeping", phil->i);
         ft_usleep(phil->all->time_to_sleep, phil->all);
-        if (phil->all->die)
-            return (NULL);
         time_printf(phil->all, "is thinking", phil->i);
+        if(phil->all->die)
+            return (NULL);
     }
     return (NULL);
 }
