@@ -6,7 +6,7 @@
 /*   By: yaman-alrifai <yaman-alrifai@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 10:05:28 by yaman-alrif       #+#    #+#             */
-/*   Updated: 2025/06/10 10:05:31 by yaman-alrif      ###   ########.fr       */
+/*   Updated: 2025/06/10 10:34:12 by yaman-alrif      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ int	valid_atoi(char *str)
 			return (0);
 		i++;
 	}
-	return (check_INT_MAX(j, i, str));
+	return (check_intmax(j, i, str));
 }
 
 int	check_args(int c, char **v)

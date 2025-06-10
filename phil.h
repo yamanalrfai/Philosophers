@@ -6,7 +6,7 @@
 /*   By: yaman-alrifai <yaman-alrifai@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 10:16:49 by yaman-alrif       #+#    #+#             */
-/*   Updated: 2025/06/10 10:32:21 by yaman-alrif      ###   ########.fr       */
+/*   Updated: 2025/06/10 10:33:30 by yaman-alrif      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ typedef struct s_all
 }	t_all;
 
 long long	atoll(const char *str);
-int			check_INT_MAX(int j, int i, char *str);
+int			check_intmax(int j, int i, char *str);
 int			valid_atoi(char *str);
 int			input_check(int c, char **v);
 int			init(t_all *all, int c, char **v);
@@ -61,7 +61,7 @@ int			init_philos(t_all *all);
 void		time_to_eat(t_phil *phil);
 void		*phil_loop(void *arg);
 long long	get_time(void);
-void		ft_usleep(long long time, t_all *all);
+void		ft_usleep(long time, t_all *all);
 void		time_printf(t_all *all, const char *message, int phil_id);
 void		mutex_eat(t_phil *phil);
 int			monitor_loop(t_all *all, int i);
