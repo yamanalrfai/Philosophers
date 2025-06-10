@@ -6,7 +6,7 @@
 /*   By: yaman-alrifai <yaman-alrifai@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 10:09:04 by yaman-alrif       #+#    #+#             */
-/*   Updated: 2025/06/10 10:09:08 by yaman-alrif      ###   ########.fr       */
+/*   Updated: 2025/06/10 14:21:31 by yaman-alrif      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,8 +66,6 @@ void	ft_usleep(long time_in_ms, t_all *table)
 	long	start;
 
 	start = get_time();
-	if (table->die)
-		return ;
 	while (get_time() - start < time_in_ms && !table->die)
 		usleep(100);
 }

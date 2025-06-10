@@ -6,7 +6,7 @@
 /*   By: yaman-alrifai <yaman-alrifai@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 10:11:26 by yaman-alrif       #+#    #+#             */
-/*   Updated: 2025/06/10 10:11:29 by yaman-alrif      ###   ########.fr       */
+/*   Updated: 2025/06/10 14:22:55 by yaman-alrif      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ void	*phil_loop(void *arg)
 
 	phil = (t_phil *)arg;
 	if (phil->i % 2 == 0)
-		usleep(1000);
+    	usleep(phil->all->time_to_eat * 1000);
 	while (1)
 	{
 		if (phil->all->num_philos == 1)
