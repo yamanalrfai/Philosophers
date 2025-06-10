@@ -6,7 +6,7 @@
 /*   By: yaman-alrifai <yaman-alrifai@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 10:16:49 by yaman-alrif       #+#    #+#             */
-/*   Updated: 2025/06/10 10:22:17 by yaman-alrif      ###   ########.fr       */
+/*   Updated: 2025/06/10 10:32:21 by yaman-alrif      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,6 @@ void		time_printf(t_all *all, const char *message, int phil_id);
 void		mutex_eat(t_phil *phil);
 int			monitor_loop(t_all *all, int i);
 void		*monitor(void *arg);
-int			end(t_all *all);
+void		end(t_all *all);
 
 #endif
