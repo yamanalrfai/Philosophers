@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   phil.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yaman-alrifai <yaman-alrifai@student.42    +#+  +:+       +#+        */
+/*   By: yalrfai <yalrfai@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 10:11:26 by yaman-alrif       #+#    #+#             */
-/*   Updated: 2025/06/10 14:22:55 by yaman-alrif      ###   ########.fr       */
+/*   Updated: 2025/06/15 16:26:28 by yalrfai          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,14 +26,14 @@ void	time_printf(t_all *all, const char *message, int phil_id)
 
 void	mutex_eat(t_phil *phil)
 {
-	time_printf(phil->all, "has taken a fork", phil->i);
-	time_printf(phil->all, "has taken a fork", phil->i);
-	time_printf(phil->all, "is eating", phil->i);
-	ft_usleep(phil->all->time_to_eat, phil->all);
 	pthread_mutex_lock(&phil->meal_lock);
 	phil->last_meal_time = get_time();
 	phil->num_meals++;
 	pthread_mutex_unlock(&phil->meal_lock);
+	time_printf(phil->all, "has taken a fork", phil->i);
+	time_printf(phil->all, "has taken a fork", phil->i);
+	time_printf(phil->all, "is eating", phil->i);
+	ft_usleep(phil->all->time_to_eat, phil->all);
 }
 
 void	time_to_eat(t_phil *phil)
@@ -69,8 +69,6 @@ void	*phil_loop(void *arg)
 	t_phil	*phil;
 
 	phil = (t_phil *)arg;
-	if (phil->i % 2 == 0)
-    	usleep(phil->all->time_to_eat * 1000);
 	while (1)
 	{
 		if (phil->all->num_philos == 1)
@@ -87,6 +85,7 @@ void	*phil_loop(void *arg)
 		time_printf(phil->all, "is thinking", phil->i);
 		if (phil->all->die)
 			return (NULL);
+		usleep(500);
 	}
 	return (NULL);
 }
